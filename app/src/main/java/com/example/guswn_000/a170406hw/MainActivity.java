@@ -18,6 +18,9 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
+
+
+    //lll
     ArrayList<String> restdata = new ArrayList<String>();
     ArrayAdapter<String> adapter;
     ArrayList<Restaurant> restlist = new ArrayList<Restaurant>();
