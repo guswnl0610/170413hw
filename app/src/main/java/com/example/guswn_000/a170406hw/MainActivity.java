@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,33 +20,48 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
+    RestaurantAdapter adapter2;
 
-
-    //lll
-    ArrayList<String> restdata = new ArrayList<String>();
-    ArrayAdapter<String> adapter;
     ArrayList<Restaurant> restlist = new ArrayList<Restaurant>();
     ListView listView;
     final int REST_INFO = 21;
     final int NEW_REST = 22;
-    TextView tv;
+    Button seldel;
+    EditText et;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tv = (TextView)findViewById(R.id.tv);
         setTitle("나의 맛집");
         setListView();
+        seldel = (Button)findViewById(R.id.btnselect);
+        et = (EditText)findViewById(R.id.editText);
     }
 
 
     public void onClick(View v)
     {
-        Intent intent = new Intent(MainActivity.this,Main2Activity.class);
-        intent.putExtra("restlist",restdata);
-        startActivityForResult(intent,NEW_REST);
+        switch (v.getId())
+        {
+            case R.id.plus:
+                Intent intent = new Intent(MainActivity.this,Main2Activity.class);
+                startActivityForResult(intent,NEW_REST);
+                break;
+            case R.id.btnnamesort:
+                adapter2.setsort(RestaurantAdapter.NAME_ASC);
+                break;
+            case R.id.btncat:
+                adapter2.setsort(RestaurantAdapter.CATE_ASC);
+                break;
+            case R.id.btnselect:
+                seldel.setText("삭제");
+
+
+                break;
+        }
+
     }
     public void setListView()
     {
@@ -54,8 +71,10 @@ public class MainActivity extends AppCompatActivity
         //data.add("무언가");
 
         //어댑터 만듬
-        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,restdata);
-        listView.setAdapter(adapter);
+//        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,restdata);
+
+        adapter2 = new RestaurantAdapter(this,restlist);
+        listView.setAdapter(adapter2);
 
         //꾹 눌렀을때 삭제
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -73,10 +92,8 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int which)
                             {
                                 //삭제 클릭시 아래꺼
-                                restdata.remove(position);
                                 restlist.remove(position);
-                                adapter.notifyDataSetChanged();
-                                tv.setText("맛집 리스트("+restdata.size()+"개)");
+                                adapter2.notifyDataSetChanged();
                                 Snackbar.make(view,"삭제되었습니다.",2000).show();
                             }
                         })
@@ -108,12 +125,11 @@ public class MainActivity extends AppCompatActivity
             if(resultCode == RESULT_OK)
             {
                 Restaurant res = data.getParcelableExtra("newrest"); //새 레스토랑 받아옴
-                restdata.add(res.getName());
                 restlist.add(res);
-                adapter.notifyDataSetChanged();
-                tv.setText("맛집 리스트("+restdata.size()+"개)");
+                adapter2.notifyDataSetChanged();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 }

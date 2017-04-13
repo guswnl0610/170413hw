@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * Created by guswn_000 on 2017-04-06.
@@ -125,6 +126,8 @@ public class Restaurant implements Parcelable
     public void setCategorynum(int categorynum) {
         this.categorynum = categorynum;
     }
+
+
 
 }
 
