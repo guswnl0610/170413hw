@@ -6,6 +6,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -38,6 +40,31 @@ public class MainActivity extends AppCompatActivity
         setListView();
         seldel = (Button)findViewById(R.id.btnselect);
         et = (EditText)findViewById(R.id.editText);
+        et.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                String filterText = s.toString();
+                if(filterText.length() > 0)
+                {
+                    listView.setFilterText(filterText);
+                }
+                else
+                {
+                    listView.clearTextFilter();
+                }
+            }
+        });
     }
 
 
@@ -56,7 +83,17 @@ public class MainActivity extends AppCompatActivity
                 adapter2.setsort(RestaurantAdapter.CATE_ASC);
                 break;
             case R.id.btnselect:
-                seldel.setText("삭제");
+                if(seldel.getText().toString().equals("선택"))
+                {
+                    seldel.setText("삭제");
+                    adapter2.showcheck();
+                }
+                else
+                {
+                    seldel.setText("선택");
+                    adapter2.delchecked();
+                }
+
 
 
                 break;
@@ -66,41 +103,9 @@ public class MainActivity extends AppCompatActivity
     public void setListView()
     {
         listView = (ListView)findViewById(R.id.listview);
-
-        //데이터를 만들고
-        //data.add("무언가");
-
-        //어댑터 만듬
-//        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,restdata);
-
         adapter2 = new RestaurantAdapter(this,restlist);
         listView.setAdapter(adapter2);
 
-        //꾹 눌렀을때 삭제
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
-
-                //정보를 삭제하는지 묻는 대화상자 나타남
-                AlertDialog.Builder dlg = new AlertDialog.Builder(view.getContext());
-                dlg.setTitle("삭제확인")
-                        .setIcon(R.drawable.potato)
-                        .setMessage("선택한 맛집을 정말 삭제하시겠습니까?")
-                        .setNegativeButton("취소",null)
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                //삭제 클릭시 아래꺼
-                                restlist.remove(position);
-                                adapter2.notifyDataSetChanged();
-                                Snackbar.make(view,"삭제되었습니다.",2000).show();
-                            }
-                        })
-                        .show();
-                return true;
-            }
-        });
 
         //클릭시 상세정보가 나타남
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

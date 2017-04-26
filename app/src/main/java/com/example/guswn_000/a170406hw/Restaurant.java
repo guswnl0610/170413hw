@@ -2,6 +2,7 @@ package com.example.guswn_000.a170406hw;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.CheckBox;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,6 +19,7 @@ public class Restaurant implements Parcelable
     private String homepage;
     private String date;
     private int categorynum;
+    private CheckBox checkBox;
 
     public Restaurant(String name, String tel, String homepage, int categorynum)
     {
@@ -127,7 +129,12 @@ public class Restaurant implements Parcelable
         this.categorynum = categorynum;
     }
 
+    public CheckBox getCheckBox() {
+        return checkBox;
+    }
 
-
+    public void setCheckBox(CheckBox checkBox) {
+        this.checkBox = checkBox;
+    }
 }
 
