@@ -77,21 +77,21 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(intent,NEW_REST);
                 break;
             case R.id.btnnamesort:
-                adapter2.setsort(RestaurantAdapter.NAME_ASC);
+                adapter2.setNameAsc();
                 break;
             case R.id.btncat:
-                adapter2.setsort(RestaurantAdapter.CATE_ASC);
+                adapter2.setCatAsc();
                 break;
             case R.id.btnselect:
                 if(seldel.getText().toString().equals("선택"))
                 {
                     seldel.setText("삭제");
-                    adapter2.showcheck();
+                    adapter2.showCheckBox();
                 }
                 else
                 {
                     seldel.setText("선택");
-                    adapter2.delchecked();
+                    adapter2.deleteitem();
                 }
 
 

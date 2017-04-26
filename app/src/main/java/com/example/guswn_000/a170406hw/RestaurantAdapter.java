@@ -22,67 +22,34 @@ import java.util.Comparator;
  * Created by guswn_000 on 2017-04-13.
  */
 
-public class RestaurantAdapter extends BaseAdapter implements Filterable
-{
-    ArrayList<Restaurant> data = new ArrayList<>();
-    ArrayList<Restaurant> filtereddata = new ArrayList<>();
-    Context context;
-    Filter listfilter;
 
 
-    public RestaurantAdapter( Context context,ArrayList<Restaurant> data) {
-        this.data = data;
+
+public class RestaurantAdapter extends BaseAdapter implements Filterable {
+    private Context context;
+    private ArrayList<Restaurant> datalist = new ArrayList<>();
+    private ArrayList<Restaurant> filteredItemList = new ArrayList<>();
+    Filter listFilter;
+
+    public RestaurantAdapter(Context context, ArrayList<Restaurant> list) {
         this.context = context;
-        this.filtereddata = data;
+        this.datalist = list;
+        this.filteredItemList = list;
     }
 
     @Override
     public int getCount() {
-        return filtereddata.size();
+        return filteredItemList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return filtereddata.get(position);
+        return filteredItemList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
         return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent)
-    {
-        if(convertView == null)
-        {
-            convertView = LayoutInflater.from(context).inflate(R.layout.itemlayout, null);
-        }
-        TextView t1 = (TextView)convertView.findViewById(R.id.tvname);
-        TextView t2 = (TextView)convertView.findViewById(R.id.tvtelnum);
-        ImageView imgv = (ImageView)convertView.findViewById(R.id.imageView);
-        CheckBox cb = (CheckBox)convertView.findViewById(R.id.checkBox);
-
-        Restaurant one = filtereddata.get(position);
-        one.setCheckBox(cb);
-        filtereddata.set(position,one);
-        data.set(position,one);
-
-        t1.setText(one.getName());
-        t2.setText(one.getTel());
-        if(one.getCategorynum() == 1)//치킨=1,피자=2,햄버거=3
-        {
-            imgv.setImageResource(R.drawable.chicken);
-        }
-        else if(one.getCategorynum() == 2)
-        {
-            imgv.setImageResource(R.drawable.pizza);
-        }
-        else
-        {
-            imgv.setImageResource(R.drawable.hamburger);
-        }
-        return convertView;
     }
 
     Comparator<Restaurant> nameAsc = new Comparator<Restaurant>() {
@@ -92,73 +59,100 @@ public class RestaurantAdapter extends BaseAdapter implements Filterable
         }
     };
 
-    Comparator<Restaurant> cateAsc = new Comparator<Restaurant>() {
+    Comparator<Restaurant> catAsc = new Comparator<Restaurant>() {
         @Override
         public int compare(Restaurant o1, Restaurant o2) {
-            if(o1.getCategorynum() < o2.getCategorynum())
+            if (o1.getCategorynum() < o2.getCategorynum())
                 return -1;
-            else if (o1.getCategorynum() == o2.getCategorynum())
-                return 0;
-            else
+            else if (o1.getCategorynum() > o2.getCategorynum())
                 return 1;
+            else
+                return 0;
         }
     };
 
-    final static int NAME_ASC = 0;
-    final static int CATE_ASC = 1;
-
-    public void setsort(int sorttype)
+    public void setNameAsc()
     {
-        if (sorttype == NAME_ASC)
-        {
-            Collections.sort(data,nameAsc);
-            this.notifyDataSetChanged(); // 얘의 this는 어댑터
-        }
-        else if (sorttype == CATE_ASC)
-        {
-            Collections.sort(data,cateAsc);
-            this.notifyDataSetChanged(); // 얘의 this는 어댑터
-        }
+        Collections.sort(filteredItemList, nameAsc);
+        this.notifyDataSetChanged();
+    }
+
+    public void setCatAsc() {
+        Collections.sort(filteredItemList, catAsc);
+        this.notifyDataSetChanged();
     }
 
 
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
 
-    //검색하는것도 만들어야함
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.itemlayout, null);
+        }
+        TextView t1 = (TextView) convertView.findViewById(R.id.tvname);
+        TextView t2 = (TextView) convertView.findViewById(R.id.tvtelnum);
+        ImageView img = (ImageView) convertView.findViewById(R.id.imageView);
+        CheckBox c1 = (CheckBox)convertView.findViewById(R.id.checkBox);
+
+        Restaurant one = filteredItemList.get(position);
+        one.setCheckBox(c1);
+        filteredItemList.set(position, one);
+        datalist.set(position, one);
+
+        t1.setText(filteredItemList.get(position).getName());
+        t2.setText(filteredItemList.get(position).getTel());
+        if(one.getCategorynum() == 1)//치킨=1,피자=2,햄버거=3
+        {
+            img.setImageResource(R.drawable.chicken);
+        }
+        else if(one.getCategorynum() == 2)
+        {
+            img.setImageResource(R.drawable.pizza);
+        }
+        else
+        {
+            img.setImageResource(R.drawable.hamburger);
+        }
+
+        return convertView;
+    }
+
+
 
     @Override
     public Filter getFilter()
     {
-        if(listfilter == null)
+        if (listFilter == null)
         {
-            listfilter = new ListFilter();
+            listFilter = new ListFilter();
         }
-
-        return listfilter;
+        return listFilter;
     }
-    //체크박슨어떡해..
+
     private class ListFilter extends Filter
     {
         @Override
         protected FilterResults performFiltering(CharSequence constraint)
         {
             FilterResults results = new FilterResults();
-            if(constraint == null || constraint.length() == 0)
+            if (constraint == null || constraint.length() == 0)
             {
-                results.values = data;
-                results.count = data.size();
+                results.values = datalist;
+                results.count = datalist.size();
             }
             else
             {
-                ArrayList<Restaurant> itemList = new ArrayList<Restaurant>();
-                for(Restaurant item : data)
+                ArrayList<Restaurant> itemList = new ArrayList<>();
+                for (Restaurant item : datalist)
                 {
-                    if(item.getName().toUpperCase().contains(constraint.toString().toUpperCase()))
+                    if (item.getName().toUpperCase().contains(constraint.toString().toUpperCase()))
                     {
                         itemList.add(item);
                     }
                 }
-                results.values = data;
-                results.count = data.size();
+                results.values = itemList;
+                results.count = itemList.size();
             }
             return results;
         }
@@ -166,8 +160,8 @@ public class RestaurantAdapter extends BaseAdapter implements Filterable
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results)
         {
-            filtereddata = (ArrayList<Restaurant>) results.values;
-            if(results.count > 0)
+            filteredItemList = (ArrayList<Restaurant>) results.values;
+            if (results.count > 0)
             {
                 notifyDataSetChanged();
             }
@@ -178,50 +172,42 @@ public class RestaurantAdapter extends BaseAdapter implements Filterable
         }
     }
 
-    public void add(Restaurant restaurant)
-    {
-        data.add(restaurant);
-    }
+    //체크박스
 
-
-
-    public void showcheck()
-    {
-        for(int i = 0; i< filtereddata.size(); i++)
+    public void showCheckBox(){
+        for(int i = 0; i<filteredItemList.size();i++ )
         {
-            filtereddata.get(i).getCheckBox().setVisibility(View.VISIBLE);
+            filteredItemList.get(i).getCheckBox().setVisibility(View.VISIBLE);
         }
         this.notifyDataSetChanged();
     }
 
-    public void delchecked()
+    public void deleteitem()
     {
-        for(int i = 0 ; i < filtereddata.size() ; i++)
+        for(int i = filteredItemList.size()-1; i>=0; i--)
         {
-            final int pos = i;
-            if(filtereddata.get(i).getCheckBox().isChecked())
+            final int index = i;
+            if(filteredItemList.get(i).getCheckBox().isChecked())
             {
                 AlertDialog.Builder dlg = new AlertDialog.Builder(context);
                 dlg.setTitle("삭제확인")
                         .setIcon(R.drawable.potato)
                         .setMessage("선택한 맛집을 정말 삭제할까요?")
-                        .setNegativeButton("취소",null)
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        .setNegativeButton("취소", null)
+                        .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                filtereddata.get(pos).getCheckBox().setVisibility(View.INVISIBLE);
-                                filtereddata.get(pos).getCheckBox().setChecked(false);
-                                filtereddata.remove(pos);
+                                filteredItemList.get(index).getCheckBox().setChecked(false);
+                                filteredItemList.get(index).getCheckBox().setVisibility(View.INVISIBLE);
+                                filteredItemList.remove(index);
                                 notifyDataSetChanged();
                             }
                         })
                         .show();
             }
-            else
-            {
-                filtereddata.get(i).getCheckBox().setVisibility(View.INVISIBLE);
+            else {
+                filteredItemList.get(i).getCheckBox().setVisibility(View.INVISIBLE);
             }
         }
     }
-
 }
