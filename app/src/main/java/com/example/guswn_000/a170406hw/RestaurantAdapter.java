@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +32,7 @@ public class RestaurantAdapter extends BaseAdapter implements Filterable {
     private ArrayList<Restaurant> datalist = new ArrayList<>();
     private ArrayList<Restaurant> filteredItemList = new ArrayList<>();
     Filter listFilter;
+    ArrayList<Integer> checked = new ArrayList<>();
 
     public RestaurantAdapter(Context context, ArrayList<Restaurant> list) {
         this.context = context;
@@ -84,7 +87,7 @@ public class RestaurantAdapter extends BaseAdapter implements Filterable {
 
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
+    public View getView(final int position, View convertView, ViewGroup parent)
     {
 
         if (convertView == null) {
@@ -96,9 +99,10 @@ public class RestaurantAdapter extends BaseAdapter implements Filterable {
         CheckBox c1 = (CheckBox)convertView.findViewById(R.id.checkBox);
 
         Restaurant one = filteredItemList.get(position);
+
+//        filteredItemList.set(position, one);
+//        datalist.set(position, one);
         one.setCheckBox(c1);
-        filteredItemList.set(position, one);
-        datalist.set(position, one);
 
         t1.setText(filteredItemList.get(position).getName());
         t2.setText(filteredItemList.get(position).getTel());
@@ -175,20 +179,17 @@ public class RestaurantAdapter extends BaseAdapter implements Filterable {
     //체크박스
 
     public void showCheckBox(){
-        for(int i = 0; i<filteredItemList.size();i++ )
+        for(int i = 0 ; i < filteredItemList.size() ; i++ )
         {
             filteredItemList.get(i).getCheckBox().setVisibility(View.VISIBLE);
         }
         this.notifyDataSetChanged();
     }
 
-    public void deleteitem()
-    {
-        for(int i = filteredItemList.size()-1; i>=0; i--)
-        {
+    public void deleteitem() {
+        for (int i = 0 ; i < filteredItemList.size() ; i++) {
             final int index = i;
-            if(filteredItemList.get(i).getCheckBox().isChecked())
-            {
+            if (filteredItemList.get(i).getCheckBox().isChecked()) {
                 AlertDialog.Builder dlg = new AlertDialog.Builder(context);
                 dlg.setTitle("삭제확인")
                         .setIcon(R.drawable.potato)
@@ -205,9 +206,11 @@ public class RestaurantAdapter extends BaseAdapter implements Filterable {
                         })
                         .show();
             }
-            else {
+            else
+            {
                 filteredItemList.get(i).getCheckBox().setVisibility(View.INVISIBLE);
             }
         }
     }
+
 }
